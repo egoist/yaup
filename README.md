@@ -65,6 +65,10 @@ Then, configure `package.json` accordingly:
 }
 ```
 
+## Contributing
+
+Bug fixes are welcome, I'm not accepting new features unless it's absolutely necessary.
+
 ## License
 
 MIT &copy; [EGOIST](https://github.com/sponsors/egoist)
