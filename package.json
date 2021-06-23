@@ -6,7 +6,8 @@
     "access": "public"
   },
   "files": [
-    "dist"
+    "dist",
+    "/runtime"
   ],
   "bin": "./dist/cli.js",
   "main": "./dist/index.js",

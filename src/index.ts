@@ -1,3 +1,4 @@
+import path from 'path'
 import { build, Plugin as EsbuildPlugin } from 'esbuild'
 import { rollup, watch as rollupWatch } from 'rollup'
 import fs from 'fs'
@@ -20,6 +21,7 @@ export type InputOptions = {
   esbuildPlugins?: EsbuildPlugin[]
   external?: string[]
   watch?: boolean
+  inject?: string[]
 }
 
 export type OutputOptions = {
@@ -143,6 +145,10 @@ export const yaup = async (inputOptions: InputOptions) => {
         splitting: o.splitting,
         watch,
         incremental: watch,
+        inject: [
+          path.join(__dirname, '../runtime/react-shim.js'),
+          ...(inputOptions.inject || []),
+        ],
         plugins: [
           resolvePlugin,
           transformPlugin,
