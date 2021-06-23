@@ -1,6 +1,6 @@
 {
   "name": "yaup",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A more advanced CLI for esbuild",
   "publishConfig": {
     "access": "public"
