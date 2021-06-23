@@ -1,17 +1,18 @@
-#!/usr/bin/env node
 import fs from 'fs'
 import path from 'path'
 import { cac } from 'cac'
 import { name, version } from '../package.json'
 
-const cli = cac('yaup')
+export const createCLI = () => {
+  const cli = cac('yaup')
 
 cli
   .command('[options]', 'Build a project')
   .option('-c, --config <configFile>', 'Use a specific config file')
   .option('-w, --watch', 'Run in watch mode')
   .action(async (_, options) => {
-    const { yaup } = await import('./')
+    // Seems like a esbuild issue, using `require` as a workaround as using `import()` will return undefined
+    const { yaup }: typeof import('.') = require('./')
     const configFile = findConfigFile(
       process.cwd(),
       typeof options.config === 'string' ? options.config : null,
@@ -96,3 +97,5 @@ async function bundleConfig(configFile: string) {
 cli.help()
 cli.version(version)
 cli.parse()
+
+}

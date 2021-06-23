@@ -7,6 +7,8 @@ import { InputOptions, OutputOptions } from './config'
 
 export * from './config'
 
+export * from './cli'
+
 export const yaup = async (inputOptions: InputOptions) => {
   const context = inputOptions.context || process.cwd()
 
