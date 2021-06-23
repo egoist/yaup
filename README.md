@@ -65,6 +65,10 @@ Then, configure `package.json` accordingly:
 }
 ```
 
+## API
+
+[Full config reference](./src/config.ts).
+
 ## Contributing
 
 Bug fixes are welcome, I'm not accepting new features unless it's absolutely necessary.
