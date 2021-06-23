@@ -38,7 +38,7 @@ export default defineConfig({
 })
 ```
 
-Run `yaup` in this directly, it will emit:
+Run `yaup` in this directory, it will emit:
 
 - `dist/esm/index.js`
 - `dist/cjs/index.js`
