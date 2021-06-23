@@ -6,7 +6,6 @@
 
 [![npm version](https://badgen.net/npm/v/yaup)](https://npm.im/yaup)
 
-
 ## Install
 
 ```bash
@@ -15,8 +14,50 @@ npm i yaup -D
 
 ## Usage
 
-```bash
-yaup -c
+It's common to publish dual CommonJS/ES module packages with an extra TypeScript declaration file, all you need is creating a `yaup.config.ts`:
+
+```ts
+import { defineConfig } from 'yaup'
+
+export default defineConfig({
+  input: './src/index.ts',
+  output: [
+    {
+      format: 'esm',
+      dir: 'dist/esm',
+    },
+    {
+      format: 'cjs',
+      dir: 'dist/cjs',
+    },
+    {
+      format: 'dts',
+      dir: 'dist/types',
+    },
+  ],
+})
+```
+
+Run `yaup` in this directly, it will emit:
+
+- `dist/esm/index.js`
+- `dist/cjs/index.js`
+- `dist/types/index.d.ts`
+
+Then, configure `package.json` accordingly:
+
+```json
+{
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "default": "./dist/cjs/index.js"
+    }
+  }
+}
 ```
 
 ## License
