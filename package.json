@@ -13,7 +13,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "node -r sucrase/register src/cli.ts -c",
+    "build": "node -r sucrase/register src/cli.ts",
     "test": "echo lol",
     "prepublishOnly": "npm run build"
   },

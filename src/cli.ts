@@ -2,22 +2,25 @@
 import fs from 'fs'
 import path from 'path'
 import { cac } from 'cac'
+import { name, version } from '../package.json'
 
 const cli = cac('yaup')
 
 cli
   .command('[options]', 'Build a project')
-  .option('-c, --config [configFile]', 'Use a config file')
+  .option('-c, --config <configFile>', 'Use a specific config file')
   .option('-w, --watch', 'Run in watch mode')
   .action(async (_, options) => {
     const { yaup } = await import('./')
-    const configFile =
-      options.config &&
-      findConfigFile(
-        process.cwd(),
-        typeof options.config === 'string' ? options.config : null,
-      )
-    const config = configFile ? await bundleConfig(configFile) : {}
+    const configFile = findConfigFile(
+      process.cwd(),
+      typeof options.config === 'string' ? options.config : null,
+    )
+    const config = configFile ? await bundleConfig(configFile) : null
+
+    if (config === null)
+      throw new Error(`No config file was found, try ${name}.config.ts`)
+
     const configItems = []
     for (const c of config) {
       if (Array.isArray(c.output)) {
@@ -91,4 +94,5 @@ async function bundleConfig(configFile: string) {
 }
 
 cli.help()
+cli.version(version)
 cli.parse()
