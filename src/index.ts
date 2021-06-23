@@ -22,6 +22,7 @@ export type InputOptions = {
   external?: string[]
   watch?: boolean
   inject?: string[]
+  reactShim?: boolean
 }
 
 export type OutputOptions = {
@@ -38,7 +39,7 @@ export type OutputOptions = {
     js?: string
     css?: string
   }
-  legacyComments?: CommonOptions['legalComments']
+  legalComments?: CommonOptions['legalComments']
 }
 
 export const defineConfig = (config: Config | Config[]) => config
@@ -142,6 +143,7 @@ export const yaup = async (inputOptions: InputOptions) => {
           console.log('[dts] Building..')
           const bundle = await rollup(rollupConfig)
           await bundle.write(rollupConfig.output)
+          console.log('[dts] finished..')
         }
         return
       }
@@ -161,9 +163,11 @@ export const yaup = async (inputOptions: InputOptions) => {
         globalName: o.globalName,
         legalComments: o.legalComments,
         inject: [
-          path.join(__dirname, '../runtime/react-shim.js'),
+          inputOptions.reactShim
+            ? path.join(__dirname, '../runtime/react-shim.js')
+            : '',
           ...(inputOptions.inject || []),
-        ],
+        ].filter(Boolean),
         plugins: [
           resolvePlugin,
           transformPlugin,
@@ -180,7 +184,7 @@ export const yaup = async (inputOptions: InputOptions) => {
           },
           ...(inputOptions.esbuildPlugins || []),
         ],
-        external: inputOptions.external,
+        external: [...(inputOptions.external || []), 'react'],
       })
     },
   }
