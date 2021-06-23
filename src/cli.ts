@@ -8,6 +8,7 @@ const cli = cac('yaup')
 cli
   .command('[options]', 'Build a project')
   .option('-c, --config [configFile]', 'Use a config file')
+  .option('-w, --watch', 'Run in watch mode')
   .action(async (_, options) => {
     const { yaup } = await import('./')
     const configFile =
@@ -29,6 +30,9 @@ cli
     }
 
     for (const c of configItems) {
+      if (options.watch) {
+        c.watch = true
+      }
       const bundle = await yaup(c)
       await bundle.write(c.output)
     }

@@ -1,5 +1,5 @@
 import { build, Plugin as EsbuildPlugin } from 'esbuild'
-import { rollup } from 'rollup'
+import { rollup, watch as rollupWatch } from 'rollup'
 import fs from 'fs'
 import { isBinaryFile } from 'isbinaryfile'
 
@@ -19,6 +19,7 @@ export type InputOptions = {
   plugins?: Plugin[]
   esbuildPlugins?: EsbuildPlugin[]
   external?: string[]
+  watch?: boolean
 }
 
 export type OutputOptions = {
@@ -101,18 +102,35 @@ export const yaup = async (inputOptions: InputOptions) => {
     },
   }
 
+  const watch = inputOptions.watch
+
   return {
     async write(o: OutputOptions) {
       if (o.format === 'dts') {
         const dtsPlugin = await import('rollup-plugin-dts')
-        const bundle = await rollup({
+        const rollupConfig = {
           input: inputFiles,
           plugins: [dtsPlugin.default()],
-        })
-        await bundle.write({
-          format: 'esm',
-          dir: o.dir,
-        })
+          output: {
+            format: 'esm' as const,
+            dir: o.dir,
+          },
+        }
+        if (watch) {
+          const watcher = rollupWatch(rollupConfig)
+          watcher.on('event', (e) => {
+            if (e.code === 'START') {
+              console.log('[dts] Building..')
+            }
+            if (e.code === 'END') {
+              console.log('[dts] finished..')
+            }
+          })
+        } else {
+          console.log('[dts] Building..')
+          const bundle = await rollup(rollupConfig)
+          await bundle.write(rollupConfig.output)
+        }
         return
       }
       await build({
@@ -123,9 +141,22 @@ export const yaup = async (inputOptions: InputOptions) => {
         bundle: true,
         platform: 'node',
         splitting: o.splitting,
+        watch,
+        incremental: watch,
         plugins: [
           resolvePlugin,
           transformPlugin,
+          {
+            name: 'show-progress',
+            setup(build) {
+              build.onStart(() => {
+                console.log(`[${o.format}] Building..`)
+              })
+              build.onEnd(() => {
+                console.log(`[${o.format}] Finished..`)
+              })
+            },
+          },
           ...(inputOptions.esbuildPlugins || []),
         ],
         external: inputOptions.external,
