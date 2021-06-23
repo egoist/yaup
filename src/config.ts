@@ -1,4 +1,4 @@
-import { Plugin as EsbuildPlugin, CommonOptions } from 'esbuild'
+import { Plugin as EsbuildPlugin, BuildOptions } from 'esbuild'
 
 export const defineConfig = (config: Config | Config[]) => config
 
@@ -46,7 +46,8 @@ export type OutputOptions = {
     js?: string
     css?: string
   }
-  legalComments?: CommonOptions['legalComments']
+  legalComments?: BuildOptions['legalComments']
+  extension?: BuildOptions['outExtension']
 }
 
 type MaybePromise<T> = T | Promise<T>

@@ -109,6 +109,7 @@ export const yaup = async (inputOptions: InputOptions) => {
         banner: o.banner,
         globalName: o.globalName,
         legalComments: o.legalComments,
+        outExtension: o.extension,
         inject: [
           inputOptions.reactShim
             ? path.join(__dirname, '../runtime/react-shim.js')
