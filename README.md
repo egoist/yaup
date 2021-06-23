@@ -6,6 +6,11 @@
 
 [![npm version](https://badgen.net/npm/v/yaup)](https://npm.im/yaup)
 
+## Why this over other esbuild/rollup wrappers?
+
+- Unopinionated: close to raw esbuild, flexible configration
+- Minimal: minimal API interface so it's easier to maintain
+
 ## Install
 
 ```bash
