@@ -25,29 +25,27 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: Cache ~/.pnpm-store
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-pnpm-store
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ matrix.node-version }}-build-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-${{ matrix.node-version }}-build-
-            ${{ runner.os }}-
-      - name: Install pnpm
-        run: npm i -g pnpm
+            ${{ runner.os }}-yarn-
 
       - name: Install deps
-        run: pnpm i
+        run: yarn
 
       # Runs a set of commands using the runners shell
       - name: Build and Test
         run: npm run test
 
       - name: Release
-        run: pnpx -y semantic-release --branches main
+        run: npx semantic-release --branches main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
