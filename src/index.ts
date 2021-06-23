@@ -1,64 +1,11 @@
 import path from 'path'
-import { build, Plugin as EsbuildPlugin, CommonOptions } from 'esbuild'
+import { build, Plugin as EsbuildPlugin } from 'esbuild'
 import { rollup, watch as rollupWatch } from 'rollup'
 import fs from 'fs'
 import { isBinaryFile } from 'isbinaryfile'
+import { InputOptions, OutputOptions } from './config'
 
-export type Config = InputOptions & {
-  output: OutputOptions | OutputOptions[]
-}
-
-export type InputOptions = {
-  /**
-   * The context directory
-   */
-  context?: string
-  /**
-   * Input files
-   */
-  input?: string | string[]
-  plugins?: Plugin[]
-  esbuildPlugins?: EsbuildPlugin[]
-  external?: string[]
-  watch?: boolean
-  inject?: string[]
-  reactShim?: boolean
-}
-
-export type OutputOptions = {
-  dir?: string
-  format?: 'cjs' | 'esm' | 'iife' | 'dts'
-  globalName?: string
-  splitting?: boolean
-  minify?: boolean
-  banner?: {
-    js?: string
-    css?: string
-  }
-  footer?: {
-    js?: string
-    css?: string
-  }
-  legalComments?: CommonOptions['legalComments']
-}
-
-export const defineConfig = (config: Config | Config[]) => config
-
-type MaybePromise<T> = T | Promise<T>
-
-export type Plugin = {
-  name: string
-
-  resolveId?: (
-    id: string,
-    importer?: string,
-  ) => MaybePromise<string | undefined | null | false>
-
-  transform?: (
-    code: string,
-    id: string,
-  ) => MaybePromise<string | undefined | null>
-}
+export * from './config'
 
 export const yaup = async (inputOptions: InputOptions) => {
   const context = inputOptions.context || process.cwd()
