@@ -1,5 +1,5 @@
 import path from 'path'
-import { build, Plugin as EsbuildPlugin } from 'esbuild'
+import { build, Plugin as EsbuildPlugin, CommonOptions } from 'esbuild'
 import { rollup, watch as rollupWatch } from 'rollup'
 import fs from 'fs'
 import { isBinaryFile } from 'isbinaryfile'
@@ -27,8 +27,18 @@ export type InputOptions = {
 export type OutputOptions = {
   dir?: string
   format?: 'cjs' | 'esm' | 'iife' | 'dts'
-  name?: string
+  globalName?: string
   splitting?: boolean
+  minify?: boolean
+  banner?: {
+    js?: string
+    css?: string
+  }
+  footer?: {
+    js?: string
+    css?: string
+  }
+  legacyComments?: CommonOptions['legalComments']
 }
 
 export const defineConfig = (config: Config | Config[]) => config
@@ -145,6 +155,11 @@ export const yaup = async (inputOptions: InputOptions) => {
         splitting: o.splitting,
         watch,
         incremental: watch,
+        minify: o.minify,
+        footer: o.footer,
+        banner: o.banner,
+        globalName: o.globalName,
+        legalComments: o.legalComments,
         inject: [
           path.join(__dirname, '../runtime/react-shim.js'),
           ...(inputOptions.inject || []),
