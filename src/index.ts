@@ -85,14 +85,14 @@ export const yaup = async (inputOptions: InputOptions) => {
               console.log('[dts] Building..')
             }
             if (e.code === 'END') {
-              console.log('[dts] finished..')
+              console.log('[dts] Finished..')
             }
           })
         } else {
           console.log('[dts] Building..')
           const bundle = await rollup(rollupConfig)
           await bundle.write(rollupConfig.output)
-          console.log('[dts] finished..')
+          console.log('[dts] Finished..')
         }
         return
       }
@@ -105,7 +105,6 @@ export const yaup = async (inputOptions: InputOptions) => {
         platform: 'node',
         splitting: o.splitting,
         watch,
-        incremental: watch,
         minify: o.minify,
         footer: o.footer,
         banner: o.banner,
