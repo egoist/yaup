@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { cac } from 'cac'
+import type { Loader } from 'esbuild'
 import { Config, InputOptions, OutputOptions } from './config'
 import { name, version } from '../package.json'
 
@@ -115,6 +116,26 @@ export const createCLI = () => {
                   return { external: true }
                 }
               })
+              build.onLoad(
+                { filter: /\.(js|ts|mjs|jsx|tsx)$/ },
+                async (args) => {
+                  const contents = await fs.promises.readFile(args.path, 'utf8')
+                  const ext = path.extname(args.path)
+                  return {
+                    contents: contents
+                      .replace(
+                        /\b__dirname\b/g,
+                        JSON.stringify(path.dirname(args.path)),
+                      )
+                      .replace(/\b__filename\b/g, JSON.stringify(args.path))
+                      .replace(
+                        /\bimport\.meta\.url\b/g,
+                        JSON.stringify(`file://${args.path}`),
+                      ),
+                    loader: ext === '.mjs' ? 'js' : (ext.slice(1) as Loader),
+                  }
+                },
+              )
             },
           },
         ],

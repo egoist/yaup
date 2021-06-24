@@ -29,8 +29,8 @@
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.2.1",
-    "typescript": "^4.2.3",
-    "rollup-plugin-dts": "^3.0.2"
+    "rollup-plugin-dts": "^3.0.2",
+    "typescript": "^4.2.3"
   },
   "dependencies": {
     "esbuild": "^0.12.9",
