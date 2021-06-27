@@ -10,7 +10,7 @@
     "/runtime",
     "/cli.js"
   ],
-  "bin": "./dist/cli.js",
+  "bin": "./cli.js",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
