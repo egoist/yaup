@@ -13,10 +13,9 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist && node -r sucrase/register cli-dev.js",
+    "build": "rm -rf dist && patch-package && node -r sucrase/register cli-dev.js",
     "test": "echo lol",
-    "prepublishOnly": "npm run build",
-    "postinstall": "patch-package"
+    "prepublishOnly": "npm run build"
   },
   "license": "MIT",
   "devDependencies": {
