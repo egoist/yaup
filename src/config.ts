@@ -70,6 +70,10 @@ export type OutputOptions = {
    * @see https://esbuild.github.io/api/#out-extension
    */
   extension?: BuildOptions['outExtension']
+  /**
+   * @see https://esbuild.github.io/api/#pure
+   */
+  pure?: string[]
 }
 
 type MaybePromise<T> = T | Promise<T>
