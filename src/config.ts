@@ -24,7 +24,7 @@ export type InputOptions = {
   /**
    * Input files
    */
-  input?: string | string[]
+  input?: string | string[] | Record<string, string>
   plugins?: Plugin[]
   esbuildPlugins?: EsbuildPlugin[]
   /**
