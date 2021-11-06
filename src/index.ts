@@ -45,10 +45,10 @@ export const yaup = async (inputOptions: InputOptions) => {
       if (!hasTransformHook) return
 
       build.onLoad({ filter: /.*/ }, async (args) => {
-        if (isBinaryFile(args.path)) return
+        if (await isBinaryFile(args.path)) return
 
         const contents = await fs.promises.readFile(args.path)
-        if (isBinaryFile(contents)) return
+        if (await isBinaryFile(contents)) return
 
         let textContents = contents.toString()
 
