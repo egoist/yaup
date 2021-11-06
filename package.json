@@ -18,6 +18,7 @@
     "test": "echo lol",
     "prepublishOnly": "npm run build"
   },
+  "sideEffects": false,
   "license": "MIT",
   "devDependencies": {
     "@egoist/prettier-config": "^0.1.0",
