@@ -4,6 +4,7 @@ specifiers:
   '@egoist/prettier-config': ^0.1.0
   '@sucrase/jest-plugin': ^2.2.0
   '@types/jest': ^26.0.20
+  bundle-require: ^2.1.2
   cac: ^6.7.11
   esbuild: ^0.13.12
   isbinaryfile: ^4.0.8
@@ -15,6 +16,7 @@ specifiers:
   typescript: ^4.2.3
 
 dependencies:
+  bundle-require: 2.1.2_esbuild@0.13.12
   esbuild: 0.13.12
   rollup: 2.59.0
 
@@ -954,6 +956,14 @@ packages:
   /buffer-from/1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
     dev: true
+
+  /bundle-require/2.1.2_esbuild@0.13.12:
+    resolution: {integrity: sha512-i8FENp+PiV5SUJztmjtfoq9rQDKhcQ1Ss924lrmAeBfL0IYT5rb6KTBMss9UNhtxndYVN6HUAh5974aZ6DDIPA==}
+    peerDependencies:
+      esbuild: '>=0.13'
+    dependencies:
+      esbuild: 0.13.12
+    dev: false
 
   /cac/6.7.11:
     resolution: {integrity: sha512-m4xrA2MKfid6uDV2j2+0mXrtPGxlvAW0y+7Gnn2P8WVMSG+4e4tcoYX++94ZPblPfpBccJ5e7HvKdghlX5yiDA==}

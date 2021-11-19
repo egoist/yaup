@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { cac } from 'cac'
-import type { Loader } from 'esbuild'
+import { bundleRequire } from 'bundle-require'
 import { Config, InputOptions, OutputOptions } from './config'
 import { name, version } from '../package.json'
 
@@ -47,12 +47,22 @@ export const createCLI = () => {
         typeof options.config === 'string' ? options.config : null,
       )
       const configs = configFile
-        ? await bundleConfig(
-            configFile,
-            options.watch && ((configs) => run(configs)),
-          )
+        ? await bundleRequire({
+            filepath: configFile,
+            onRebuild:
+              options.watch &&
+              (({ mod }) => {
+                if (mod) {
+                  run([].concat(mod.default))
+                }
+              }),
+          }).then((res) => {
+            return [].concat(res.mod.default)
+          })
         : null
-      await run(configs)
+      if (configs) {
+        await run(configs)
+      }
     })
 
   function findConfigFile(cwd: string, name: string | null) {
@@ -72,79 +82,6 @@ export const createCLI = () => {
       if (fs.existsSync(abs)) {
         return abs
       }
-    }
-  }
-
-  function removeFile(filepath: string) {
-    if (fs.existsSync(filepath)) {
-      fs.unlinkSync(filepath)
-    }
-  }
-
-  async function bundleConfig(
-    configFile: string,
-    onRebuild?: (configs: Config[]) => void,
-  ) {
-    const { build } = await import('esbuild')
-    const outFile = configFile.replace(/\.[a-z]+$/, '.bundled.js')
-    const readConfig = () => {
-      delete require.cache[outFile]
-      const result = require(outFile)
-      removeFile(outFile)
-      return Array.isArray(result.default) ? result.default : [result.default]
-    }
-    try {
-      await build({
-        entryPoints: [configFile],
-        format: 'cjs',
-        outfile: outFile,
-        platform: 'node',
-        bundle: true,
-        watch: onRebuild && {
-          onRebuild(error) {
-            if (error) return
-            console.log(`Reloading config..`)
-            onRebuild(readConfig())
-          },
-        },
-        plugins: [
-          {
-            name: 'ignore',
-            setup(build) {
-              build.onResolve({ filter: /.*/ }, (args) => {
-                if (!path.isAbsolute(args.path) && !/^[\.\/]/.test(args.path)) {
-                  return { external: true }
-                }
-              })
-              build.onLoad(
-                { filter: /\.(js|ts|mjs|jsx|tsx)$/ },
-                async (args) => {
-                  const contents = await fs.promises.readFile(args.path, 'utf8')
-                  const ext = path.extname(args.path)
-                  return {
-                    contents: contents
-                      .replace(
-                        /\b__dirname\b/g,
-                        JSON.stringify(path.dirname(args.path)),
-                      )
-                      .replace(/\b__filename\b/g, JSON.stringify(args.path))
-                      .replace(
-                        /\bimport\.meta\.url\b/g,
-                        JSON.stringify(`file://${args.path}`),
-                      ),
-                    loader: ext === '.mjs' ? 'js' : (ext.slice(1) as Loader),
-                  }
-                },
-              )
-            },
-          },
-        ],
-      })
-      const config = readConfig()
-      return config
-    } catch (error) {
-      removeFile(outFile)
-      throw error
     }
   }
 

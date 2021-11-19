@@ -74,6 +74,11 @@ export type OutputOptions = {
    * @see https://esbuild.github.io/api/#pure
    */
   pure?: string[]
+  /**
+   * The platform to run the bundled code
+   * @default `node`
+   */
+  platform?: 'electron' | 'node'
 }
 
 type MaybePromise<T> = T | Promise<T>

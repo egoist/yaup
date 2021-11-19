@@ -4,6 +4,7 @@ import { rollup, watch as rollupWatch } from 'rollup'
 import fs from 'fs'
 import { isBinaryFile } from 'isbinaryfile'
 import { InputOptions, OutputOptions } from './config'
+import { timestamp, truthy } from './utils'
 
 export * from './config'
 
@@ -82,10 +83,10 @@ export const yaup = async (inputOptions: InputOptions) => {
           const watcher = rollupWatch(rollupConfig)
           watcher.on('event', (e) => {
             if (e.code === 'START') {
-              console.log('[dts] Building..')
+              console.log(`[${timestamp()}] [dts] Building..`)
             }
             if (e.code === 'END') {
-              console.log('[dts] Finished..')
+              console.log(`[${timestamp()}] [dts] Finished..`)
             }
           })
         } else {
@@ -102,7 +103,8 @@ export const yaup = async (inputOptions: InputOptions) => {
         format: o.format,
         outdir: o.dir,
         bundle: true,
-        platform: 'node',
+        platform:
+          !o.platform || o.platform === 'electron' ? 'node' : o.platform,
         splitting: o.splitting,
         watch,
         minify: o.minify,
@@ -125,16 +127,19 @@ export const yaup = async (inputOptions: InputOptions) => {
             name: 'show-progress',
             setup(build) {
               build.onStart(() => {
-                console.log(`[${o.format}] Building..`)
+                console.log(`[${timestamp()}] [${o.format}] Building..`)
               })
               build.onEnd(() => {
-                console.log(`[${o.format}] Finished..`)
+                console.log(`[${timestamp()}] [${o.format}] Finished..`)
               })
             },
           },
           ...(inputOptions.esbuildPlugins || []),
         ],
-        external: [...(inputOptions.external || []), 'react'],
+        external: [
+          ...(inputOptions.external || []),
+          o.platform === 'electron' && 'electron',
+        ].filter(truthy),
       })
     },
   }
